@@ -180,8 +180,8 @@ def angle_cal_csv(df, save_path):
 
 if __name__ == '__main__':
     # read csv
-    csv_path = 'data/0615/60.csv'
-    save_path = 'data/0615/60_angle.csv'
+    csv_path = 'data/backup/0615/60.csv'
+    save_path = 'data/backup/0615/60_angle.csv'
 
     df = pd.read_csv(csv_path)
     num_sample = df.shape[0]
