@@ -4,9 +4,8 @@ import time
 import serial
 import numpy as np
 import torch
-from multiprocessing import Process, Pipe
 from PySide2.QtWidgets import QMainWindow, QApplication
-from PySide2.QtCore import QObject, Signal, Slot, QThread
+from PySide2.QtCore import Signal, QThread, QCoreApplication
 from demoUI import Ui_Dialog
 from collections import deque
 from utils import savgol, get_sensor_scaler
@@ -26,23 +25,43 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.readSerialThread = ReadSerial()
         self.predictSerialThread = PredictSerial()
         self.signalSlotInit()
+        self.switchBtnTrainFlag = True
+
 
     def signalSlotInit(self):
         self.btnBeginSerial.clicked.connect(self.readSerialThreadSlot)
+        self.btnBeginSerial.clicked.connect(self.closebtnBeginSerial)
+        
+        self.btnInitAngle.clicked.connect(self.openbtnBeginTrain)
         self.btnInitAngle.clicked.connect(self.predictSerialThread.getInitAngle)
-        self.btnInitAngle.clicked.connect(self.predictSerialThread.closeUpdateLabel)
-        self.readSerialThread.sinOut.connect(self.predictSerialThread.updateSensor)
-        self.predictSerialThread.sinOut.connect(self.updateInitAngleLbl)
-        self.predictSerialThread.sinUpdtInit.connect(self.updateInitAngleLbl)
+        self.btnInitAngle.clicked.connect(self.predictSerialThread.closeUpdateInitLabel)
 
+        self.btnBeginTrain.clicked.connect(self.predictSerialThread.chgUpdateDiffLabel)
+        self.btnBeginTrain.clicked.connect(self.switchBtnTrain)
+
+        self.readSerialThread.sinOut.connect(self.predictSerialThread.updtSensor)
+
+        self.predictSerialThread.sinOutInit.connect(self.updateInitAngleLbl)
+        self.predictSerialThread.sinUpdtInit.connect(self.updateInitAngleLbl)
+        self.predictSerialThread.sinUpdtDiff.connect(self.updateDiffAngleLbl)
 
     # ----------- Slot ---------------
     def readSerialThreadSlot(self):
         self.readSerialThread.start()
         time.sleep(3)
         self.predictSerialThread.start()
+
+    def openbtnBeginSerial(self):
+        self.btnBeginSerial.setEnabled(True)
+
+    def closebtnBeginSerial(self):
         self.btnBeginSerial.setEnabled(False)
 
+    def openbtnBeginTrain(self):
+        self.btnBeginTrain.setEnabled(True)
+
+    def closebtnBeginTrain(self):
+        self.btnBeginTrain.setEnabled(False)
 
     def updateInitAngleLbl(self, obj):
         self.Init_AA_SN_X.setText(str(obj[0]))
@@ -52,10 +71,23 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.Init_GH_AA_Y.setText(str(obj[4]))
         self.Init_GH_AA_Z.setText(str(obj[5]))
 
+    def updateDiffAngleLbl(self, obj):
+        self.Act_AA_SN_X.setText(str(obj[0]))
+        self.Act_AA_SN_Y.setText(str(obj[1]))
+        self.Act_AA_SN_Z.setText(str(obj[2]))
+        self.Act_GH_AA_X.setText(str(obj[3]))
+        self.Act_GH_AA_Y.setText(str(obj[4]))
+        self.Act_GH_AA_Z.setText(str(obj[5]))
+
+    def switchBtnTrain(self):
+        self.switchBtnTrainFlag = not self.switchBtnTrainFlag
+        if self.switchBtnTrainFlag == True:
+            self.btnBeginTrain.setText(QCoreApplication.translate("Dialog", u"\u5f00\u59cb\u8bad\u7ec3", None))
+        else:
+            self.btnBeginTrain.setText(QCoreApplication.translate("Dialog", u"\u505c\u6b62\u8bad\u7ec3", None))
 
 class ReadSerial(QThread):
     sinOut = Signal(object)
-
     def __init__(self, parent=None):
         super(ReadSerial, self).__init__(parent)
         self.ser = serial.Serial(  # 下面这些参数根据情况修改
@@ -85,15 +117,18 @@ class ReadSerial(QThread):
 
 
 class PredictSerial(QThread):
-    sinOut = Signal(object)
+    sinOutInit = Signal(object)
     sinUpdtInit = Signal(object)
+    sinUpdtDiff = Signal(object)
 
     def __init__(self, parent=None):
         super(PredictSerial, self).__init__(parent)
         self.sensor = None
         self.rtmAngle = None
         self.initAngle = None
-        self.doUpdateLabel = True
+        self.diffAngle = None
+        self.doUpdateInitLabel = True
+        self.doUpdateDiffLabel = False
 
     def __del__(self):
         #线程状态改变与线程终止
@@ -101,15 +136,23 @@ class PredictSerial(QThread):
         self.wait()
         print('挂起线程【Predict】')
 
-    def updateSensor(self, sensor):
+    def updtSensor(self, sensor):
         self.sensor = sensor
 
+    def updtDiffAngle(self):
+        diffAngle = self.rtmAngle - self.initAngle
+        diffAngle = np.around(diffAngle, 1)
+        return diffAngle
+        
     def getInitAngle(self):
         self.initAngle = self.rtmAngle
         self.sinUpdtInit.emit(self.initAngle)
 
-    def closeUpdateLabel(self):
-        self.doUpdateLabel = False
+    def closeUpdateInitLabel(self):
+        self.doUpdateInitLabel = False
+
+    def chgUpdateDiffLabel(self):
+        self.doUpdateDiffLabel = not self.doUpdateDiffLabel
 
     def run(self):
         print('开始线程【Predict】')
@@ -127,8 +170,11 @@ class PredictSerial(QThread):
                 angle = np.around(angle[0].data.numpy(), 1)
                 self.rtmAngle = angle
                 ## update GUI label
-                if self.doUpdateLabel:
-                    self.sinOut.emit(self.rtmAngle)
+                if self.doUpdateInitLabel:
+                    self.sinOutInit.emit(self.rtmAngle)
+                if self.doUpdateDiffLabel:
+                    self.diffAngle = self.updtDiffAngle()
+                    self.sinUpdtDiff.emit(self.diffAngle)
                 time.sleep(0.1)
 
 
