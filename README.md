@@ -7,10 +7,16 @@
 #### 滤波器
 - [x] Savitzky–Golay filter
 - [ ] Kalman filter (尝试融入模型？)
-### 模型训练
+### 模型
+#### 模型训练
 - [x] 模型拟合度改进
 - [ ] 重新划分数据集
 - [ ] 尝试使用AutoML
+#### 模型评估
+- [ ] The changes in RMSEs of the prediction results
+- [ ] overall error / worst-case error
+- [ ] Calibration data size
+- [ ] Cumulative distribution of the position tracking errors
 ### GUI开发
 - [x] 静止状态角度记录
 - [x] 变化值的阈值判断（肩胛胸关节各方向大于5度判断为代偿）
