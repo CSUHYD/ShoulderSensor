@@ -8,7 +8,7 @@
 - [x] Savitzky–Golay filter
 - [ ] Kalman filter (尝试融入模型？)
 ### 模型训练
-- [ ] 模型拟合度改进
+- [x] 模型拟合度改进
 - [ ] 重新划分数据集
 ### GUI开发
 - [x] 静止状态角度记录
