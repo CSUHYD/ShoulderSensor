@@ -10,7 +10,7 @@ from utils import savgol, get_sensor_scaler
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 batch_size = 32
-seq_len = 10
+seq_len = 120
 inp_dim = 5
 mid_dim = 6
 num_layers = 2
@@ -19,7 +19,7 @@ out_dim = 6
 
 def read_serial(pipe):
     ser = serial.Serial(  # 下面这些参数根据情况修改
-        port='/dev/cu.usbserial-1440',  # 串口
+        port='/dev/cu.usbserial-1430',  # 串口
         baudrate=9600,  # 波特率
         parity=serial.PARITY_ODD,
         stopbits=serial.STOPBITS_TWO,
@@ -27,7 +27,7 @@ def read_serial(pipe):
     )
     scaler = get_sensor_scaler()
     data = None
-    deqSensor = deque(maxlen=10)
+    deqSensor = deque(maxlen=seq_len)
     while True:
       data = ser.readline().decode("utf-8")
       data_list = np.array([np.double(i) for i in data.split(',')[:-1]])
@@ -61,7 +61,7 @@ def load_model():
     lstm = LSTM(batch_size, inp_dim, mid_dim,
                 num_layers, out_dim, seq_len).to(device)
     lstm.load_state_dict(torch.load(
-        'model.pth', map_location=device), strict=False)
+        'model/model.pth', map_location=device), strict=False)
     print('[INFO] model loaded successfully!')
 
     return lstm
