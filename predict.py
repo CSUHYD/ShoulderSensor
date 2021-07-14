@@ -1,3 +1,4 @@
+import cv2
 import time
 import serial
 import numpy as np
@@ -6,6 +7,8 @@ from multiprocessing import Process, Pipe
 from collections import deque
 from model import LSTM
 from utils import savgol, get_sensor_scaler
+
+import matplotlib.pyplot as plt
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -43,6 +46,9 @@ def predict_serial(pipe):
     lstm.eval()
     for i in range(seq_len):
       sensor = pipe.recv()
+
+    ax = [] 
+    plt.figure(figsize=(12, 7), dpi=100)
     while True:
       sensor = pipe.recv()
       ## filter
@@ -53,7 +59,23 @@ def predict_serial(pipe):
       sensor = torch.from_numpy(sensor).float().to(device)
       ## predict
       outputs = lstm(sensor)
-      print(outputs[0].data.numpy())
+      output = outputs[0].data.numpy()
+
+      # plot
+      ax.append(list(output))
+      ax_ = np.array(ax)
+      plt.clf()       
+      plt.plot(ax_[:, 0], label='AA_SN_X')
+      plt.plot(ax_[:, 1], label='AA_SN_Y')
+      plt.plot(ax_[:, 2], label='AA_SN_Z')
+      plt.plot(ax_[:, 3], label='GH_AA_X')
+      plt.plot(ax_[:, 4], label='GH_AA_Y')
+      plt.plot(ax_[:, 5], label='GH_AA_Z')
+
+      axes = plt.gca()
+      axes.set_ylim([0, 180])
+      plt.legend()
+      plt.savefig('result/test/realtime.png')
 
 
 def load_model():
@@ -65,6 +87,7 @@ def load_model():
     print('[INFO] model loaded successfully!')
 
     return lstm
+
 
 
 if __name__ == '__main__':
