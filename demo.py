@@ -8,11 +8,10 @@ import numpy as np
 import torch
 from PySide2.QtWidgets import QMainWindow, QApplication
 from PySide2.QtCore import Signal, QThread, QCoreApplication
-from PySide2.QtGui import QPixmap
 from demoUI import Ui_Dialog
 from collections import deque
 from utils import savgol, get_sensor_scaler
-from predict import load_model, device, batch_size, seq_len
+from predict import load_model, device, batch_size
 
 
 os.environ['QT_MAC_WANTS_LAYER'] = '1'
@@ -48,7 +47,6 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.predictSerialThread.sinOutInit.connect(self.updateInitAngleLbl)
         self.predictSerialThread.sinUpdtInit.connect(self.updateInitAngleLbl)
         self.predictSerialThread.sinUpdtDiff.connect(self.updateDiffAngleLbl)
-        self.predictSerialThread.sinUpdtDiff.connect(self.switchCpsLabel)
 
     # ----------- Slot ---------------
     def readSerialThreadSlot(self):
@@ -81,6 +79,7 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.Act_GH_AA_Y.setText(str(obj[4]))
         self.Act_GH_AA_Z.setText(str(obj[5]))
 
+<<<<<<< HEAD
     def switchCpsLabel(self, obj):
         tshd = 10
         flag = abs(obj) > tshd
@@ -91,6 +90,8 @@ class MainWindow(QMainWindow, Ui_Dialog):
             else:
                 cpsLabelList[i].clear()
 
+=======
+>>>>>>> parent of 8a5d084 (Merge branch 'main' of https://github.com/CSUHYD/ShoulderSensor into main)
     def switchBtnTrain(self):
         self.switchBtnTrainFlag = not self.switchBtnTrainFlag
         if self.switchBtnTrainFlag == True:
@@ -109,7 +110,11 @@ class ReadSerial(QThread):
     def __init__(self, parent=None):
         super(ReadSerial, self).__init__(parent)
         self.ser = serial.Serial(  # 下面这些参数根据情况修改
+<<<<<<< HEAD
         port='/dev/cu.usbserial-1420',  # 串口
+=======
+        port='/dev/cu.usbserial-1440',  # 串口
+>>>>>>> parent of 8a5d084 (Merge branch 'main' of https://github.com/CSUHYD/ShoulderSensor into main)
         baudrate=9600,  # 波特率
         parity=serial.PARITY_ODD,
         stopbits=serial.STOPBITS_TWO,
@@ -123,7 +128,7 @@ class ReadSerial(QThread):
         print('[INFO] 开始线程【Read Serial】')
         scaler = get_sensor_scaler()
         data = None
-        deqSensor = deque(maxlen=seq_len)
+        deqSensor = deque(maxlen=10)
 
         while True:
             data = self.ser.readline().decode("utf-8")
@@ -210,7 +215,7 @@ class PredictSerial(QThread):
     def run(self):
         print('[INFO] 开始线程【Predict】')
         while True:
-            if not((self.sensor is None) or (self.sensor.shape != (seq_len, 5))):
+            if not((self.sensor is None) or (self.sensor.shape != (10, 5))):
                 sensor = self.sensor
                 # ## filter
                 for i in range(sensor.shape[1]):
@@ -220,12 +225,17 @@ class PredictSerial(QThread):
                 sensor_batch = np.stack([sensor]*batch_size)
                 sensor_batch = torch.from_numpy(sensor_batch).float().to(device)
                 ## predict
+<<<<<<< HEAD
                 angle = lstm(sensor_batch)
                 angle = angle[0].data.numpy()
                 for i in range(len(angle)):
                     if angle[i] > 90:
                         angle[i] = 180 - angle[i]
                 angle = np.around(angle, 1)
+=======
+                angle = lstm(sensor)
+                angle = np.around(angle[0].data.numpy(), 1)
+>>>>>>> parent of 8a5d084 (Merge branch 'main' of https://github.com/CSUHYD/ShoulderSensor into main)
                 self.rtmAngle = angle
                 self.initAngleBuf.append(list(self.rtmAngle))
                 ## update GUI label
