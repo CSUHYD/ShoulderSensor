@@ -109,7 +109,7 @@ class ReadSerial(QThread):
     def __init__(self, parent=None):
         super(ReadSerial, self).__init__(parent)
         self.ser = serial.Serial(  # 下面这些参数根据情况修改
-        port='/dev/cu.usbserial-1420',  # 串口
+        port='/dev/cu.usbserial-1430',  # 串口
         baudrate=9600,  # 波特率
         parity=serial.PARITY_ODD,
         stopbits=serial.STOPBITS_TWO,
@@ -212,7 +212,6 @@ class PredictSerial(QThread):
             print(self.sensor)
             if not((self.sensor is None) or (self.sensor.shape != (seq_len, 5))):
                 sensor = self.sensor
-                print(self.sensor)
                 ## filter
                 for i in range(sensor.shape[1]):
                     sensor[:, i] = savgol(sensor[:, i], 51, 2, do_plot=False)
@@ -242,12 +241,15 @@ class PredictSerial(QThread):
                     # exchange real-time angle with mean-filter angle
                     # self.diffAngle = diffAngleMean
                     self.diffAngle = np.around(self.diffAngle, 1)
+                    self.diffAngle[0] += 11
+                    self.diffAngle[1] += 11
+                    self.diffAngle[2] += 4
                     self.sinUpdtDiff.emit(self.diffAngle)
 
                 if self.trainState:
                     self.trainAngleBuf.append(list(self.rtmAngle))
                     self.trainSensorBuf.append(list(sensor))
-                # time.sleep(0.1)
+                time.sleep(0.1)
 
 
 if __name__ == '__main__':

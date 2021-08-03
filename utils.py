@@ -5,13 +5,17 @@ from sklearn.preprocessing import StandardScaler
 import numpy as np
 
 
-def savgol(data, window, k, do_plot=True):
+def savgol(data, window, k, title='', do_plot=True):
     result = savgol_filter(data, window, k, mode= 'nearest')
     if do_plot:
         figure(figsize=(16, 9), dpi=100)
-        plt.plot(data, color='r')
-        plt.plot(result, 'b', label = 'savgol')
+        plt.plot(data, color='r', label='raw data')
+        plt.plot(result, 'b', label='savgol')
+        plt.title(title)
+        plt.legend(loc=4)
+        plt.savefig(f'result/data_processing/savgol_{title}.png')
         plt.show()
+
 
     return result
 
