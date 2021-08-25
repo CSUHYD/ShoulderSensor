@@ -12,12 +12,14 @@ from PySide2.QtGui import QPixmap
 from demoUI import Ui_Dialog
 from collections import deque
 from utils import savgol, get_sensor_scaler
-from predict import load_model, device, batch_size, seq_len
+from predict import load_lstm, load_attention, device, batch_size, seq_len
 
 
 os.environ['QT_MAC_WANTS_LAYER'] = '1'
-lstm = load_model()
-lstm.eval()
+
+# model = load_lstm()
+model = load_attention()
+model.eval()
 MEAN_WINDOW_LENGTH = 10
 
 
@@ -109,7 +111,7 @@ class ReadSerial(QThread):
     def __init__(self, parent=None):
         super(ReadSerial, self).__init__(parent)
         self.ser = serial.Serial(  # 下面这些参数根据情况修改
-        port='/dev/cu.usbserial-1430',  # 串口
+        port='/dev/cu.usbserial-1440',  # 串口
         baudrate=9600,  # 波特率
         parity=serial.PARITY_ODD,
         stopbits=serial.STOPBITS_TWO,
@@ -174,7 +176,6 @@ class PredictSerial(QThread):
         meanInitAngle = np.min(np.array(self.initAngleBuf), axis=0)
         meanInitAngle = np.around(meanInitAngle, 1)
         print(np.array(f'[INFO] 初始角度获取平均(最小化)了 {np.array(self.initAngleBuf).shape[0]} 组数据。'))
-        print(np.array(self.initAngleBuf))
 
         # clear buffer
         self.initAngleBuf = list()
@@ -208,48 +209,43 @@ class PredictSerial(QThread):
 
     def run(self):
         print('[INFO] 开始线程【Predict】')
-        while True:
-            print(self.sensor)
-            if not((self.sensor is None) or (self.sensor.shape != (seq_len, 5))):
-                sensor = self.sensor
-                ## filter
-                for i in range(sensor.shape[1]):
-                    sensor[:, i] = savgol(sensor[:, i], 51, 2, do_plot=False)
+        with torch.no_grad():
+            while True:
+                if not((self.sensor is None) or (self.sensor.shape != (seq_len, 5))):
+                    sensor = self.sensor
+                    ## filter
+                    for i in range(sensor.shape[1]):
+                        sensor[:, i] = savgol(sensor[:, i], 51, 2, do_plot=False)
+                    ## fit batch size
+                    sensor_batch = np.stack([sensor]*batch_size)
+                    sensor_batch = torch.from_numpy(sensor_batch).float().to(device)
+                    ## predict
+                    angle = model(sensor_batch)
+                    angle = angle[0].data.numpy()
+                    for i in range(len(angle)):
+                        if angle[i] > 90:
+                            angle[i] = 180 - angle[i]
+                    angle = np.around(angle, 1)
 
-                ## fit batch size
-                sensor_batch = np.stack([sensor]*batch_size)
-                sensor_batch = torch.from_numpy(sensor_batch).float().to(device)
-                ## predict
-                angle = lstm(sensor_batch)
-                angle = angle[0].data.numpy()
-                for i in range(len(angle)):
-                    if angle[i] > 90:
-                        angle[i] = 180 - angle[i]
-                angle = np.around(angle, 1)
-                self.rtmAngle = angle
-                self.initAngleBuf.append(list(self.rtmAngle))
-                ## update GUI label
-                if self.doUpdateInitLabel:
-                    ## realtime init angle
-                    self.sinOutInit.emit(self.rtmAngle)
-
-                if self.doUpdateDiffLabel:
-                    self.diffAngle = self.updtDiffAngle()
-                    # mean-filter
-                    self.diffAngleDeq.append(self.diffAngle)
-                    diffAngleMean = np.mean(np.array(list(self.diffAngleDeq)), axis=0)
-                    # exchange real-time angle with mean-filter angle
-                    # self.diffAngle = diffAngleMean
-                    self.diffAngle = np.around(self.diffAngle, 1)
-                    self.diffAngle[0] += 11
-                    self.diffAngle[1] += 11
-                    self.diffAngle[2] += 4
-                    self.sinUpdtDiff.emit(self.diffAngle)
-
-                if self.trainState:
-                    self.trainAngleBuf.append(list(self.rtmAngle))
-                    self.trainSensorBuf.append(list(sensor))
-                time.sleep(0.1)
+                    self.rtmAngle = angle
+                    self.initAngleBuf.append(list(self.rtmAngle))
+                    ## update GUI label
+                    if self.doUpdateInitLabel:
+                        ## realtime init angle
+                        self.sinOutInit.emit(self.rtmAngle)
+                    if self.doUpdateDiffLabel:
+                        self.diffAngle = self.updtDiffAngle()
+                        # mean-filter
+                        self.diffAngleDeq.append(self.diffAngle)
+                        diffAngleMean = np.mean(np.array(list(self.diffAngleDeq)), axis=0)
+                        # exchange real-time angle with mean-filter angle
+                        # self.diffAngle = diffAngleMean
+                        self.diffAngle = np.around(self.diffAngle, 1)
+                        self.sinUpdtDiff.emit(self.diffAngle)
+                    if self.trainState:
+                        self.trainAngleBuf.append(list(self.rtmAngle))
+                        self.trainSensorBuf.append(list(sensor))
+                    time.sleep(0.1)
 
 
 if __name__ == '__main__':

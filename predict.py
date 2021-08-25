@@ -5,20 +5,23 @@ import numpy as np
 import torch
 from multiprocessing import Process, Pipe
 from collections import deque
-from model import LSTM
+from model import LSTM, Attention
 from utils import savgol, get_sensor_scaler
 
 import matplotlib.pyplot as plt
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-batch_size = 32
+batch_size = 1
+# LSTM
 seq_len = 120
 inp_dim = 5
 mid_dim = 6
 num_layers = 2
 out_dim = 6
-
+# Attention
+d_model = 80
+dropout = 0.1
 
 def read_serial(pipe):
     ser = serial.Serial(  # 下面这些参数根据情况修改
@@ -42,7 +45,7 @@ def read_serial(pipe):
 
 def predict_serial(pipe):
     print('[INFO] Ready to predict...')
-    lstm = load_model()
+    lstm = load_lstm()
     lstm.eval()
     for i in range(seq_len):
       sensor = pipe.recv()
@@ -78,16 +81,23 @@ def predict_serial(pipe):
       plt.savefig('result/test/realtime.png')
 
 
-def load_model():
+def load_lstm():
     print('[INFO] Load model...')
     lstm = LSTM(batch_size, inp_dim, mid_dim,
                 num_layers, out_dim, seq_len).to(device)
-    lstm.load_state_dict(torch.load(
-        'model/model.pth', map_location=device), strict=False)
+    lstm.load_state_dict(torch.load('model/model.pth', map_location=device), strict=False)
     print('[INFO] model loaded successfully!')
 
     return lstm
 
+
+def load_attention(model_path="./model/model.ckpt"):
+    print('[INFO] Load model...')
+    model = Attention(d_model, seq_len, dropout).to(device)
+    model.load_state_dict(torch.load(model_path, map_location=device), strict=False)
+    print('[INFO] model loaded successfully!')
+
+    return model
 
 
 if __name__ == '__main__':

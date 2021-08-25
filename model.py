@@ -1,4 +1,6 @@
 from __future__ import print_function, division
+from torchinfo import summary
+import torch.nn.functional as F
 import torch
 import torch.nn as nn
 
@@ -47,3 +49,46 @@ class LSTM(nn.Module):
         output = self.reg(output)
 
         return output
+
+
+class Attention(nn.Module):
+    def __init__(self, d_model, seq_len, dropout):
+        super().__init__()
+        # Project the dimension of features from that of input into d_model.
+        self.prenet = nn.Linear(5, d_model)
+        # TODO:
+        #   Change Transformer to Conformer.
+        #   https://arxiv.org/abs/2005.08100
+        self.encoder_layer = nn.TransformerEncoderLayer(
+            d_model=d_model, dim_feedforward=256, nhead=2
+        )
+        self.pred_layer = nn.Sequential(
+            nn.Linear(d_model, d_model),
+            nn.ReLU(),
+            nn.Linear(d_model, 6),
+        )
+
+    def forward(self, mels):
+        """
+        args:
+          mels: (batch size, length, 40)
+        return:
+          out: (batch size, n_spks)
+        """
+        # out: (batch size, length, d_model)
+        out = self.prenet(mels)
+        # out: (length, batch size, d_model)
+        out = out.permute(1, 0, 2)
+        # The encoder layer expect features in the shape of (length, batch size, d_model).
+        out = self.encoder_layer(out)
+        # out: (batch size, length, d_model)
+        out = out.transpose(0, 1)
+        # mean pooling
+        stats = out.mean(dim=1)
+        # out: (batch, n_output)
+        out = self.pred_layer(stats)
+        return out
+
+
+if __name__=='__main__':
+    print(summary(Attention(d_model=80, seq_len=120, dropout=0.1), input_size=(32, 120, 5)))
