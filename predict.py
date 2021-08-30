@@ -7,7 +7,6 @@ from multiprocessing import Process, Pipe
 from collections import deque
 from model import LSTM, Attention
 from utils import savgol, get_sensor_scaler
-
 import matplotlib.pyplot as plt
 
 
@@ -22,6 +21,7 @@ out_dim = 6
 # Attention
 d_model = 80
 dropout = 0.1
+
 
 def read_serial(pipe):
     ser = serial.Serial(  # 下面这些参数根据情况修改
@@ -63,8 +63,7 @@ def predict_serial(pipe):
       ## predict
       outputs = lstm(sensor)
       output = outputs[0].data.numpy()
-
-      # plot
+      ## plot
       ax.append(list(output))
       ax_ = np.array(ax)
       plt.clf()       

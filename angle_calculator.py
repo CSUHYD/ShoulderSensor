@@ -40,6 +40,8 @@ def get_vector_angle(A, B, C):
     angle_rad = np.arccos(cos_)
     # 转换为角度值：
     angle_deg = angle_rad*180/np.pi
+    if angle_deg > 90:
+        angle_deg = 180 - angle_deg
 
     return round(angle_deg, 2)
 
@@ -180,8 +182,8 @@ def angle_cal_csv(df, save_path):
 
 if __name__ == '__main__':
     # read csv
-    csv_path = 'data/backup/0615/60.csv'
-    save_path = 'data/backup/0615/60_angle.csv'
+    csv_path = 'data/backup/angle_test/houshen_1.csv'
+    save_path = 'data/backup/angle_test/houshen_1_angle.csv'
 
     df = pd.read_csv(csv_path)
     num_sample = df.shape[0]

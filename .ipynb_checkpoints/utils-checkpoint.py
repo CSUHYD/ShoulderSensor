@@ -30,7 +30,7 @@ def get_sensor_scaler(path='data/sensor.npy',):
     return scaler
 
 
-def hand_minmax_scale(X, _min=25, _max=225):   
+def minmax_scaler(X, _min=25, _max=225):   
     X_std = (X - _min) / (_max - _min)
     return X_std
 
