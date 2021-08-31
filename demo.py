@@ -221,16 +221,15 @@ class PredictSerial(QThread):
                 ## filter
                 for i in range(sensor.shape[1]):
                     sensor[:, i] = savgol(sensor[:, i], 51, 2, do_plot=False)
-                sensor
                 ## fit batch size
                 sensor_batch = np.stack([sensor]*batch_size)
                 sensor_batch = torch.from_numpy(sensor_batch).float().to(device)
                 ## predict
                 angle = model(sensor_batch)
                 angle = angle[0].data.numpy()
-                for i in range(len(angle)):
-                    if angle[i] > 90:
-                        angle[i] = 180 - angle[i]
+                # for i in range(len(angle)):
+                #     if angle[i] > 90:
+                #         angle[i] = 180 - angle[i]
                 angle = np.around(angle, 1)
 
                 self.rtmAngle = angle
