@@ -375,3 +375,107 @@ nohup: jupyter: No such file or directory
 [I 2021-08-30 11:31:32.505 ServerApp] Saving file at /attention.ipynb
 [I 2021-08-30 11:31:54.906 ServerApp] Saving file at /attention.ipynb
 [I 2021-08-30 11:33:55.101 ServerApp] Saving file at /attention.ipynb
+[I 2021-08-30 21:33:59.528 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-30 21:33:59.578 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-30 21:33:59.598 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-08-30 21:33:59.600 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:31e2009f-bd07-4f75-b78a-7e0db7fbad82
+[I 2021-08-30 21:33:59.685 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-30 21:33:59.701 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-30 21:33:59.735 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-08-31 11:03:04.254 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-08-31 11:03:04.261 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:78877e73-6ac3-453d-8644-fdaf832c4eae
+[I 2021-08-31 11:03:04.266 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-31 11:03:04.269 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-31 11:03:04.321 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-08-31 11:03:04.366 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-31 11:03:04.448 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-31 23:32:59.640 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-31 23:32:59.856 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:31e2009f-bd07-4f75-b78a-7e0db7fbad82
+[I 2021-08-31 23:32:59.858 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-31 23:32:59.866 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-08-31 23:33:00.264 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-08-31 23:33:00.340 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-08-31 23:33:00.386 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-01 08:49:42.835 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:78877e73-6ac3-453d-8644-fdaf832c4eae
+[I 2021-09-01 08:49:42.845 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-01 08:49:42.846 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-01 08:49:42.847 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-01 08:49:42.973 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-01 08:49:43.006 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-01 08:49:43.047 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-01 14:44:59.870 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-01 14:47:01.029 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-01 17:06:59.027 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-01 23:07:18.491 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-01 23:07:18.572 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-01 23:07:18.598 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-01 23:07:18.654 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:31e2009f-bd07-4f75-b78a-7e0db7fbad82
+[I 2021-09-01 23:07:18.729 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-01 23:07:18.750 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-01 23:07:18.776 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-02 16:01:19.602 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:78877e73-6ac3-453d-8644-fdaf832c4eae
+[I 2021-09-02 16:01:19.657 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-02 16:01:19.746 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-02 16:01:19.779 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-02 16:01:21.459 ServerApp] Restoring connection for 1175a079-7547-4936-97e0-e0fc539e6823:78877e73-6ac3-453d-8644-fdaf832c4eae
+[I 2021-09-02 16:01:21.863 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-02 16:01:21.904 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-02 16:01:22.444 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-02 19:33:09.165 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 19:35:09.579 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 19:41:10.902 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 19:43:12.163 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 20:14:06.387 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 20:16:06.667 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 20:18:06.931 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-02 22:48:58.666 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-02 22:48:58.732 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-02 22:48:58.740 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-02 22:48:58.762 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:78877e73-6ac3-453d-8644-fdaf832c4eae
+[I 2021-09-02 22:48:58.829 ServerApp] Restoring connection for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-02 22:48:58.858 ServerApp] Restoring connection for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-02 22:48:58.882 ServerApp] Restoring connection for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-03 14:45:20.846 ServerApp] Creating new notebook in 
+[I 2021-09-03 14:45:21.413 ServerApp] Kernel started: cee26ee3-2c9b-4c59-8b54-b0e6bd5d4a1e
+[I 2021-09-03 14:47:21.207 ServerApp] Saving file at /未命名.ipynb
+[I 2021-09-03 14:50:13.109 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-03 14:52:13.355 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-03 15:25:13.069 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-03 15:27:14.382 ServerApp] Saving file at /lstm.ipynb
+[I 2021-09-03 15:55:16.248 ServerApp] 302 GET / (::1) 7.08ms
+[I 2021-09-03 15:55:16.476 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:31e2009f-bd07-4f75-b78a-7e0db7fbad82
+[I 2021-09-03 15:55:16.481 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:80b2f9f2-4f56-4141-8d4f-38ebbbc274ec
+[I 2021-09-03 15:55:16.487 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:a5681fde-ccfa-488c-9209-0714608fb23b
+[I 2021-09-03 15:55:16.490 ServerApp] Starting buffering for cee26ee3-2c9b-4c59-8b54-b0e6bd5d4a1e:0189efd1-6915-469c-a20d-3b3a512a0c79
+[I 2021-09-03 15:55:16.491 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:e7b3a234-3f0b-4e3a-8a14-cce7a8fed58c
+[I 2021-09-03 15:55:22.544 LabApp] Build is up to date
+[W 2021-09-03 15:55:23.066 ServerApp] Notebook angle_calculator.ipynb is not trusted
+[W 2021-09-03 15:55:23.190 ServerApp] Notebook data_preprocessing.ipynb is not trusted
+[W 2021-09-03 15:55:23.337 ServerApp] Notebook attention.ipynb is not trusted
+[W 2021-09-03 15:55:23.434 ServerApp] Notebook lstm.ipynb is not trusted
+[W 2021-09-03 15:55:23.495 ServerApp] Notebook 未命名.ipynb is not trusted
+[I 2021-09-03 15:55:29.413 ServerApp] Starting buffering for cee26ee3-2c9b-4c59-8b54-b0e6bd5d4a1e:8dc1e3b7-3f95-4df7-84cf-f5ee4d2e7fae
+[I 2021-09-03 15:55:29.415 ServerApp] Starting buffering for 47722d24-76c9-48be-9ad9-6edd81a7c8bb:2d46ef01-b8a4-405b-8cd8-ea47bb77dd0d
+[I 2021-09-03 15:55:29.416 ServerApp] Starting buffering for 1175a079-7547-4936-97e0-e0fc539e6823:a70319fe-b528-4c69-95ec-c8691d301916
+[I 2021-09-03 15:55:29.417 ServerApp] Starting buffering for 1fc59dde-58ed-4361-b3ae-8a468abfbd5d:c8c36e18-71f6-437a-80a2-f95ce890be50
+[I 2021-09-03 15:55:29.417 ServerApp] Starting buffering for 20f16f5f-dbdb-449a-af44-65042b744b38:cb92f918-7b2b-4ec6-b51a-0cc9a96b3d56
+ 1: 0x1001e9a35 node::Abort() [/Users/hyd/opt/anaconda3/lib/libnode.83.dylib]
+ 2: 0x1001beae9 node::PlatformInit() [/Users/hyd/opt/anaconda3/lib/libnode.83.dylib]
+ 3: 0x1001be207 node::InitializeOncePerProcess(int, char**) [/Users/hyd/opt/anaconda3/lib/libnode.83.dylib]
+ 4: 0x1001bedbc node::Start(int, char**) [/Users/hyd/opt/anaconda3/lib/libnode.83.dylib]
+ 5: 0x100000f08 main [/Users/hyd/opt/anaconda3/bin/node]
+ 6: 0x7fff203c0f3d start [/usr/lib/system/libdyld.dylib]
+ 7: 0x2 
+[W 2021-09-03 15:55:58.681 LabApp] Could not determine jupyterlab build status without nodejs
+[W 2021-09-03 15:56:00.510 ServerApp] Notebook angle_calculator.ipynb is not trusted
+[W 2021-09-03 15:56:00.744 ServerApp] Notebook data_preprocessing.ipynb is not trusted
+[W 2021-09-03 15:56:00.948 ServerApp] Notebook attention.ipynb is not trusted
+[W 2021-09-03 15:56:01.066 ServerApp] Notebook lstm.ipynb is not trusted
+[W 2021-09-03 15:56:01.133 ServerApp] Notebook 未命名.ipynb is not trusted
+[IPKernelApp] WARNING | Parent appears to have exited, shutting down.
+[IPKernelApp] WARNING | Parent appears to have exited, shutting down.
+/Users/hyd/opt/anaconda3/lib/python3.8/multiprocessing/resource_tracker.py:216: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+[IPKernelApp] WARNING | Parent appears to have exited, shutting down.
+[IPKernelApp] WARNING | Parent appears to have exited, shutting down.
+[IPKernelApp] WARNING | Parent appears to have exited, shutting down.

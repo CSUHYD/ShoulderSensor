@@ -1,2 +1,7 @@
 __pycache__
 .vscode
+*.out
+*.out
+data/learning/.DS_Store
+.DS_Store
+__pycache__/angle_calculator.cpython-38.pyc
