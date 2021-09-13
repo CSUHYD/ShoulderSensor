@@ -16,7 +16,6 @@ def savgol(data, window, k, title='', do_plot=False):
         plt.legend(loc=4)
         plt.savefig(f'result/data_processing/savgol_{title}.png')
         plt.show()
-
     return result
 
 
@@ -26,8 +25,12 @@ def get_sensor_scaler(path='data/sensor.npy',):
     scaler = StandardScaler()  # 实例化
     sensor = scaler.fit_transform(sensor)
     print("MEAN and VAR: ", scaler.mean_, scaler.var_)
-
     return scaler
+
+
+def standardize_sensor_channlewise(sensorAll):
+    sensorAllStd = np.array(list(map(minmax_scaler, sensorAll)))
+    return sensorAllStd
 
 
 def minmax_scaler(X, _min=25, _max=225):   

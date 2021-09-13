@@ -11,14 +11,15 @@ from PySide2.QtCore import Signal, QThread, QCoreApplication
 from PySide2.QtGui import QPixmap
 from demoUI import Ui_Dialog
 from collections import deque
-from utils import savgol, get_sensor_scaler, minmax_scaler
-from predict import load_lstm, load_attention, device, batch_size, seq_len
+from utils import savgol, get_sensor_scaler, minmax_scaler, standardize_sensor_channlewise
+from predict import load_attention_lstm, load_lstm, load_attention, device, batch_size, window_length
 
 
 os.environ['QT_MAC_WANTS_LAYER'] = '1'
 
 # model = load_lstm()
-model = load_attention()
+# model = load_attention()
+model = load_attention_lstm()
 model.eval()
 MEAN_WINDOW_LENGTH = 10
 
@@ -84,7 +85,7 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.Act_GH_AA_Z.setText(str(obj[5]))
 
     def switchCpsLabel(self, obj):
-        tshd = 10
+        tshd = 5
         flag = abs(obj) > tshd
         cpsLabelList = [self.Cps_AA_SN_X, self.Cps_AA_SN_Y, self.Cps_AA_SN_Z]
         for i, switch in enumerate(flag[:2]):
@@ -126,7 +127,7 @@ class ReadSerial(QThread):
         # Standardize
         # scaler = get_sensor_scaler()
         data = None
-        deqSensor = deque(maxlen=seq_len)
+        deqSensor = deque(maxlen=window_length)
 
         while True:
             data = self.ser.readline().decode("utf-8")
@@ -136,9 +137,10 @@ class ReadSerial(QThread):
             # Standardize
             # sensor = scaler.fit_transform(sensor)
             # Sensor-wize MinMax Scaler
-            sensor = np.array(list(map(minmax_scaler, sensor)))
-            print('='*20)
-            print(sensor.shape)
+            # sensor = np.array(list(map(minmax_scaler, sensor)))
+            sensor = standardize_sensor_channlewise(sensor)
+            # print('='*20)
+            # print(sensor.shape)
             self.sinOut.emit(sensor)
 
 
@@ -175,11 +177,14 @@ class PredictSerial(QThread):
 
     def updtDiffAngle(self):
         diffAngle = self.rtmAngle - self.initAngle
+        # print('rtm:', self.rtmAngle), 
+        # print('init:', self.initAngle)
+        # print('diff:', diffAngle)
         return diffAngle
         
     def getInitAngle(self):
         ## mean init angle
-        meanInitAngle = np.min(np.array(self.initAngleBuf), axis=0)
+        meanInitAngle = np.mean(np.array(self.initAngleBuf), axis=0)
         meanInitAngle = np.around(meanInitAngle, 1)
         print(np.array(f'[INFO] 初始角度获取平均(最小化)了 {np.array(self.initAngleBuf).shape[0]} 组数据。'))
 
@@ -216,7 +221,7 @@ class PredictSerial(QThread):
     def run(self):
         print('[INFO] 开始线程【Predict】')
         while True:
-            if not((self.sensor is None) or (self.sensor.shape != (seq_len, 5))):
+            if not((self.sensor is None) or (self.sensor.shape != (window_length, 5))):
                 sensor = self.sensor
                 ## filter
                 for i in range(sensor.shape[1]):

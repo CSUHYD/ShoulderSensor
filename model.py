@@ -90,5 +90,59 @@ class Attention(nn.Module):
         return out
 
 
+class AttentionLSTM(nn.Module):
+    def __init__(self,
+                 d_channel,
+                 d_temporal,
+                 d_lstm_hidden,
+                 lstm_num_layers,
+                 window_length,
+                 dropout):
+        super().__init__()
+        self.channelEncoder = nn.Linear(5, d_channel)
+        self.channelwiseAttentionLayer = nn.TransformerEncoderLayer(
+            d_model=window_length, dim_feedforward=512, nhead=8, dropout=dropout)
+        self.lstm = nn.LSTM(input_size=d_channel,
+                            hidden_size=d_lstm_hidden,
+                            num_layers=lstm_num_layers)
+        self.predLayer = nn.Sequential(
+            nn.Linear(d_lstm_hidden, d_lstm_hidden),
+            nn.ReLU(),
+            nn.Linear(d_lstm_hidden, 6))
+
+    def forward(self, sensors):
+        """
+        About Pytorch LSTM:
+        https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html#torch.nn.LSTM
+        args:
+          sensors: (batch size, length, 5)
+        return:
+          out: (batch size, angles)
+        """
+        # input: (batch size, length, 5)
+        # (batch size, length, d_channel)
+        out = self.channelEncoder(sensors)
+        # (d_channel, batch size, length)
+        out = out.permute(2, 0, 1)
+        out = self.channelwiseAttentionLayer(
+            out)   # (d_channel, batch size, length)
+        # (length， batch size, d_channel)
+        out = out.permute(2, 1, 0)
+        # (length, batch size, d_lstm_hidden)
+        out, (hn, cn) = self.lstm(out)
+        # (batch size, d_lstm_hidden)
+        out = out[-1, :, :]
+        out = self.predLayer(out)                   # (batch size, num_angles)
+
+        return out
+
+
 if __name__=='__main__':
     print(summary(Attention(d_model=80, seq_len=120, dropout=0.1), input_size=(32, 120, 5)))
+    print(summary(AttentionLSTM(d_channel=128,
+                                d_temporal=32,
+                                d_lstm_hidden=64,
+                                lstm_num_layers=2,
+                                window_length=32,
+                                dropout=0.1),
+                                input_size=(8, 32, 5)))

@@ -17,12 +17,13 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(842, 522)
+        Dialog.resize(914, 605)
         self.horizontalLayoutWidget_3 = QWidget(Dialog)
         self.horizontalLayoutWidget_3.setObjectName(u"horizontalLayoutWidget_3")
-        self.horizontalLayoutWidget_3.setGeometry(QRect(210, 460, 421, 51))
+        self.horizontalLayoutWidget_3.setGeometry(QRect(130, 540, 681, 51))
         font = QFont()
         font.setFamily(u"Heiti SC")
+        font.setPointSize(24)
         self.horizontalLayoutWidget_3.setFont(font)
         self.horizontalLayout_3 = QHBoxLayout(self.horizontalLayoutWidget_3)
         self.horizontalLayout_3.setSpacing(30)
@@ -50,7 +51,7 @@ class Ui_Dialog(object):
 
         self.gridLayoutWidget = QWidget(Dialog)
         self.gridLayoutWidget.setObjectName(u"gridLayoutWidget")
-        self.gridLayoutWidget.setGeometry(QRect(30, 20, 781, 427))
+        self.gridLayoutWidget.setGeometry(QRect(40, 20, 821, 501))
         self.gridLayoutWidget.setFont(font)
         self.gridLayout = QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -309,31 +310,28 @@ class Ui_Dialog(object):
 
         self.label_5 = QLabel(self.gridLayoutWidget)
         self.label_5.setObjectName(u"label_5")
-        font1 = QFont()
-        font1.setFamily(u"Heiti SC")
-        font1.setPointSize(14)
-        self.label_5.setFont(font1)
+        self.label_5.setFont(font)
         self.label_5.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.label_5, 0, 2, 1, 1)
 
         self.label_4 = QLabel(self.gridLayoutWidget)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setFont(font1)
+        self.label_4.setFont(font)
         self.label_4.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.label_4, 0, 0, 1, 1)
 
         self.label_3 = QLabel(self.gridLayoutWidget)
         self.label_3.setObjectName(u"label_3")
-        self.label_3.setFont(font1)
+        self.label_3.setFont(font)
         self.label_3.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.label_3, 0, 1, 1, 1)
 
         self.label_6 = QLabel(self.gridLayoutWidget)
         self.label_6.setObjectName(u"label_6")
-        self.label_6.setFont(font1)
+        self.label_6.setFont(font)
         self.label_6.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.label_6, 1, 0, 1, 1)
@@ -377,7 +375,7 @@ class Ui_Dialog(object):
 
         self.label_10 = QLabel(self.gridLayoutWidget)
         self.label_10.setObjectName(u"label_10")
-        self.label_10.setFont(font1)
+        self.label_10.setFont(font)
         self.label_10.setStyleSheet(u"")
 
         self.gridLayout.addWidget(self.label_10, 5, 0, 1, 1)

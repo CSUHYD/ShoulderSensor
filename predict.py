@@ -5,22 +5,27 @@ import numpy as np
 import torch
 from multiprocessing import Process, Pipe
 from collections import deque
-from model import LSTM, Attention
-from utils import savgol, get_sensor_scaler
+from model import LSTM, Attention, AttentionLSTM
+from utils import savgol, get_sensor_scaler, standardize_sensor_channlewise
 import matplotlib.pyplot as plt
 
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 batch_size = 1
+window_length = 32
 # LSTM
-seq_len = 120
 inp_dim = 5
 mid_dim = 6
 num_layers = 2
 out_dim = 6
 # Attention
 d_model = 80
-dropout = 0.1
+dropout = 0
+# AttentionLSTM
+d_channel = 128
+d_temporal = 32
+d_lstm_hidden = 128
+lstm_num_layers = 2
 
 
 def read_serial(pipe):
@@ -31,23 +36,25 @@ def read_serial(pipe):
         stopbits=serial.STOPBITS_TWO,
         bytesize=serial.SEVENBITS
     )
-    scaler = get_sensor_scaler()
+    # scaler = get_sensor_scaler()
     data = None
-    deqSensor = deque(maxlen=seq_len)
+    deqSensor = deque(maxlen=window_length)
     while True:
       data = ser.readline().decode("utf-8")
       data_list = np.array([np.double(i) for i in data.split(',')[:-1]])
       deqSensor.append(data_list)
       sensor = np.array(list(deqSensor))
-      sensor = scaler.fit_transform(sensor)
+      # sensor = scaler.fit_transform(sensor)
+      sensor = standardize_sensor_channlewise(sensor)
+      print(sensor.shape)
       pipe.send(sensor)
 
 
 def predict_serial(pipe):
     print('[INFO] Ready to predict...')
-    lstm = load_lstm()
-    lstm.eval()
-    for i in range(seq_len):
+    attention_lstm = load_attention_lstm()
+    attention_lstm.eval()
+    for i in range(window_length):
       sensor = pipe.recv()
 
     ax = [] 
@@ -61,7 +68,7 @@ def predict_serial(pipe):
       sensor = np.stack([sensor]*batch_size)
       sensor = torch.from_numpy(sensor).float().to(device)
       ## predict
-      outputs = lstm(sensor)
+      outputs = attention_lstm(sensor)
       output = outputs[0].data.numpy()
       ## plot
       ax.append(list(output))
@@ -83,7 +90,7 @@ def predict_serial(pipe):
 def load_lstm():
     print('[INFO] Load model...')
     lstm = LSTM(batch_size, inp_dim, mid_dim,
-                num_layers, out_dim, seq_len).to(device)
+                num_layers, out_dim, window_length).to(device)
     lstm.load_state_dict(torch.load('model/model.pth', map_location=device), strict=False)
     print('[INFO] model loaded successfully!')
 
@@ -92,7 +99,21 @@ def load_lstm():
 
 def load_attention(model_path="./model/model.ckpt"):
     print('[INFO] Load model...')
-    model = Attention(d_model, seq_len, dropout).to(device)
+    model = Attention(d_model, window_length, dropout).to(device)
+    model.load_state_dict(torch.load(model_path, map_location=device), strict=False)
+    print('[INFO] model loaded successfully!')
+
+    return model
+
+
+def load_attention_lstm(model_path="./model/attentionLSTM-2021-09-09-15-03.ckpt"):
+    print('[INFO] Load model...')
+    model = AttentionLSTM(d_channel,
+                          d_temporal,
+                          d_lstm_hidden,
+                          lstm_num_layers,
+                          window_length,
+                          dropout)
     model.load_state_dict(torch.load(model_path, map_location=device), strict=False)
     print('[INFO] model loaded successfully!')
 
