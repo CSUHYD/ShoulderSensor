@@ -2,6 +2,7 @@ import sys
 import os
 import time
 from datetime import datetime
+from typing import Tuple
 from numpy.lib.function_base import diff
 import serial
 import numpy as np
@@ -9,7 +10,8 @@ import torch
 from PySide2.QtWidgets import QMainWindow, QApplication
 from PySide2.QtCore import Signal, QThread, QCoreApplication
 from PySide2.QtGui import QPixmap
-from demoUI import Ui_Dialog
+from UI.demoUI import Ui_Dialog
+from UI.DialogPlot import Ui_DialogPlot
 from collections import deque
 from utils import savgol, get_sensor_scaler, minmax_scaler, standardize_sensor_channlewise
 from predict import load_attention_lstm, load_lstm, load_attention, device, batch_size, window_length
@@ -29,6 +31,7 @@ class MainWindow(QMainWindow, Ui_Dialog):
         QMainWindow.__init__(self)
         self.setupUi(self)
         self.setWindowTitle("App")
+        self.plotDialog = Ui_DialogPlot()
         #实例化多线程对象
         self.readSerialThread = ReadSerial()
         self.predictSerialThread = PredictSerial()
@@ -46,12 +49,17 @@ class MainWindow(QMainWindow, Ui_Dialog):
         self.btnBeginTrain.clicked.connect(self.predictSerialThread.chgUpdateDiffLabel)
         self.btnBeginTrain.clicked.connect(self.switchBtnTrain)
 
-        self.readSerialThread.sinOut.connect(self.predictSerialThread.updtSensor)
+        self.btnOpenPlotDialog.clicked.connect(self.showPlotDialog)
 
-        self.predictSerialThread.sinOutInit.connect(self.updateInitAngleLbl)
-        self.predictSerialThread.sinUpdtInit.connect(self.updateInitAngleLbl)
-        self.predictSerialThread.sinUpdtDiff.connect(self.updateDiffAngleLbl)
-        self.predictSerialThread.sinUpdtDiff.connect(self.switchCpsLabel)
+        self.readSerialThread.sensorDeqOutSignal.connect(self.predictSerialThread.updtSensor)
+        self.readSerialThread.sensorRawOutSignal.connect(self.predictSerialThread.updtRawSensor)
+
+        self.predictSerialThread.angleInitOutSignal.connect(self.updateInitAngleLbl)
+        self.predictSerialThread.angleInitOutSignal.connect(self.updateInitAngleLbl)
+        self.predictSerialThread.angleInitUpdtSignal.connect(self.updateInitAngleLbl)
+        self.predictSerialThread.angleUpdtDiffSignal.connect(self.updateDiffAngleLbl)
+        self.predictSerialThread.angleUpdtDiffSignal.connect(self.switchCpsLabel)
+        self.predictSerialThread.resultsRtmSignal.connect(self.plotDialog.recv_sensor_and_angle)
 
     # ----------- Slot ---------------
     def readSerialThreadSlot(self):
@@ -67,7 +75,7 @@ class MainWindow(QMainWindow, Ui_Dialog):
 
     def openbtnBeginTrain(self):
         self.btnBeginTrain.setEnabled(True)
-
+        
     def updateInitAngleLbl(self, obj):
         self.Init_AA_SN_X.setText(str(obj[0]))
         self.Init_AA_SN_Y.setText(str(obj[1]))
@@ -106,17 +114,24 @@ class MainWindow(QMainWindow, Ui_Dialog):
             print('[INFO] TRAINING...')
             self.btnBeginTrain.setText(QCoreApplication.translate("Dialog", u"\u505c\u6b62\u8bad\u7ec3", None))
 
+    def showPlotDialog(self):
+        self.plotDialog.show()
+
 
 class ReadSerial(QThread):
-    sinOut = Signal(object)
+    sensorDeqOutSignal = Signal(object)
+    sensorRawOutSignal = Signal(object)
     def __init__(self, parent=None):
         super(ReadSerial, self).__init__(parent)
-        self.ser = serial.Serial(  # 下面这些参数根据情况修改
-        port='/dev/cu.usbserial-1430',  # 串口
-        baudrate=9600,  # 波特率
-        parity=serial.PARITY_ODD,
-        stopbits=serial.STOPBITS_TWO,
-        bytesize=serial.SEVENBITS)
+        try:
+            self.ser = serial.Serial(  # 下面这些参数根据情况修改
+            port='/dev/cu.usbserial-1430',  # 串口
+            baudrate=9600,  # 波特率
+            parity=serial.PARITY_ODD,
+            stopbits=serial.STOPBITS_TWO,
+            bytesize=serial.SEVENBITS)
+        except Exception:
+            print("[ERROR] Please check usb serial!")
         
     def __del__(self):
         self.wait()
@@ -126,32 +141,35 @@ class ReadSerial(QThread):
         print('[INFO] 开始线程【Read Serial】')
         # Standardize
         # scaler = get_sensor_scaler()
-        data = None
         deqSensor = deque(maxlen=window_length)
-
         while True:
-            data = self.ser.readline().decode("utf-8")
-            data_list = np.array([np.double(i) for i in data.split(',')[:-1]])
-            deqSensor.append(data_list)
+            rawSensorStr = self.ser.readline().decode("utf-8")
+            rawSensor = np.array([np.double(i) for i in rawSensorStr.split(',')[:-1]])
+            # Test for GUI plot
+            # rawSensor = np.random.rand(5) * 100
+            deqSensor.append(rawSensor)
             sensor = np.array(list(deqSensor))
             # Standardize
             # sensor = scaler.fit_transform(sensor)
             # Sensor-wize MinMax Scaler
             # sensor = np.array(list(map(minmax_scaler, sensor)))
-            sensor = standardize_sensor_channlewise(sensor)
-            # print('='*20)
-            # print(sensor.shape)
-            self.sinOut.emit(sensor)
+            sensorDeqStd = standardize_sensor_channlewise(sensor)
+            # Send sensor deque for predict.
+            self.sensorDeqOutSignal.emit(sensorDeqStd)
+            self.sensorRawOutSignal.emit(rawSensor)
+            time.sleep(0.1)
 
 
 class PredictSerial(QThread):
-    sinOutInit = Signal(object)
-    sinUpdtInit = Signal(object)
-    sinUpdtDiff = Signal(object)
+    angleInitOutSignal = Signal(object)
+    angleInitUpdtSignal = Signal(object)
+    angleUpdtDiffSignal = Signal(object)
+    resultsRtmSignal = Signal(object)
 
     def __init__(self, parent=None):
         super(PredictSerial, self).__init__(parent)
         self.sensor = None
+        self.rawSensor = None
         self.rtmAngle = None
         self.initAngle = None
         self.diffAngle = None
@@ -175,6 +193,9 @@ class PredictSerial(QThread):
     def updtSensor(self, sensor):
         self.sensor = sensor
 
+    def updtRawSensor(self, rawSensor):
+        self.rawSensor = rawSensor
+
     def updtDiffAngle(self):
         diffAngle = self.rtmAngle - self.initAngle
         # print('rtm:', self.rtmAngle), 
@@ -192,7 +213,7 @@ class PredictSerial(QThread):
         self.initAngleBuf = list()
         # emit mean angle
         self.initAngle = meanInitAngle
-        self.sinUpdtInit.emit(meanInitAngle)
+        self.angleInitUpdtSignal.emit(meanInitAngle)
 
     def closeUpdateInitLabel(self):
         self.doUpdateInitLabel = False
@@ -223,35 +244,34 @@ class PredictSerial(QThread):
         while True:
             if not((self.sensor is None) or (self.sensor.shape != (window_length, 5))):
                 sensor = self.sensor
-                ## filter
+                # filter
                 for i in range(sensor.shape[1]):
                     sensor[:, i] = savgol(sensor[:, i], 51, 2, do_plot=False)
-                ## fit batch size
+                # fit batch size
                 sensor_batch = np.stack([sensor]*batch_size)
                 sensor_batch = torch.from_numpy(sensor_batch).float().to(device)
-                ## predict
+                # predict
                 angle = model(sensor_batch)
                 angle = angle[0].data.numpy()
-                # for i in range(len(angle)):
-                #     if angle[i] > 90:
-                #         angle[i] = 180 - angle[i]
                 angle = np.around(angle, 1)
-
+                # update GUI label
                 self.rtmAngle = angle
                 self.initAngleBuf.append(list(self.rtmAngle))
-                ## update GUI label
+                # Send sensor and inference angle results to plot widget
+                self.resultsRtmSignal.emit([self.rawSensor, self.rtmAngle])
+                
                 if self.doUpdateInitLabel:
                     ## realtime init angle
-                    self.sinOutInit.emit(self.rtmAngle)
+                    self.angleInitOutSignal.emit(self.rtmAngle)
                 if self.doUpdateDiffLabel:
-                    self.diffAngle = self.updtDiffAngle()
+                    self.diffAngle = self.updtDiffAngle() + 5
                     # mean-filter
                     self.diffAngleDeq.append(self.diffAngle)
                     diffAngleMean = np.mean(np.array(list(self.diffAngleDeq)), axis=0)
                     # exchange real-time angle with mean-filter angle
                     # self.diffAngle = diffAngleMean
                     self.diffAngle = np.around(self.diffAngle, 1)
-                    self.sinUpdtDiff.emit(self.diffAngle)
+                    self.angleUpdtDiffSignal.emit(self.diffAngle)
                 if self.trainState:
                     self.trainAngleBuf.append(list(self.rtmAngle))
                     self.trainSensorBuf.append(list(sensor))
