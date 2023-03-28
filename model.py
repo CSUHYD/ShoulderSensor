@@ -124,15 +124,16 @@ class AttentionLSTM(nn.Module):
         out = self.channelEncoder(sensors)
         # (d_channel, batch size, length)
         out = out.permute(2, 0, 1)
-        out = self.channelwiseAttentionLayer(
-            out)   # (d_channel, batch size, length)
+        # (d_channel, batch size, length)
+        out = self.channelwiseAttentionLayer(out)   
         # (length， batch size, d_channel)
         out = out.permute(2, 1, 0)
         # (length, batch size, d_lstm_hidden)
         out, (hn, cn) = self.lstm(out)
         # (batch size, d_lstm_hidden)
         out = out[-1, :, :]
-        out = self.predLayer(out)                   # (batch size, num_angles)
+         # (batch size, num_angles)
+        out = self.predLayer(out)                  
 
         return out
 
