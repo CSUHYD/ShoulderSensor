@@ -1,0 +1,3 @@
+RMSE loss on testset:, 20.450433292740918
+Task was destroyed but it is pending!
+task: <Task pending name='Task-2' coro=<Kernel.poll_control_queue() running at /home/cdi/anaconda3/envs/cl/lib/python3.10/site-packages/ipykernel/kernelbase.py:279> wait_for=<Future finished result=<Future at 0x...state=pending>> cb=[_chain_future.<locals>._call_set_state() at /home/cdi/anaconda3/envs/cl/lib/python3.10/asyncio/futures.py:392]>

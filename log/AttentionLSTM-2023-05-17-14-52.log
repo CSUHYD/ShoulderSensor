@@ -1,0 +1,3 @@
+RMSE loss on testset:, 12.092830984384682
+R2_avg loss on testset:, -0.2069486885238964
+R2_var loss on testset:, 0.32538301899124844
